@@ -1,6 +1,6 @@
 import * as memoController from './memo.controller';
 import Router from 'koa-router';
-import { validateBody } from '../../middlewares/validator';
+import { validateBody } from '../../middlewares/request-validator';
 import { CreateMemoDTO } from './dtos/create-memo.dto';
 import { UpdateMemoDTO } from './dtos/update-memo.dto';
 
