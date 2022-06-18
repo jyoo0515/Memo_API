@@ -13,6 +13,7 @@ const AppDataSource = new DataSource({
   logging: true,
   entities: ['src/**/**.entity{.ts,.js}'],
   migrations: ['src/database/migrations/**/*{.ts,.js}'],
+  migrationsRun: true,
 });
 
 export default AppDataSource;
