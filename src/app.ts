@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import Koa from 'koa';
 import Router from 'koa-router';
 import koaBody from 'koa-body';
