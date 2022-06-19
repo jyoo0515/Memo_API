@@ -1,8 +1,17 @@
-import { BeforeInsert, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import bcrypt from 'bcrypt';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { ResponseUserDTO } from './dtos/response-user.dto';
 import { SALT_ROUNDS } from '../../constants';
+import { Memo } from '../memos/memo.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -14,6 +23,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @OneToMany(() => Memo, (memo) => memo.createdBy, { onDelete: 'CASCADE' })
+  memos: Memo[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
   createdAt: Date;
@@ -34,7 +46,6 @@ export class User {
 
   static toDTO(userEntity: User) {
     const data = instanceToPlain(userEntity);
-    console.log(plainToInstance(ResponseUserDTO, data));
     return plainToInstance(ResponseUserDTO, data);
   }
 }
