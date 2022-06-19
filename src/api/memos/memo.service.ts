@@ -6,6 +6,7 @@ import { ResponseMemoDTO } from './dtos/response-memo.dto';
 import { CustomError } from '../../util/custom-error';
 import { UpdateMemoDTO } from './dtos/update-memo.dto';
 import { findUserByUsername } from '../users/user.service';
+import { Pagination, PaginationOptions } from '../../util/pagination';
 
 const memoRepository: Repository<Memo> = AppDataSource.getRepository(Memo);
 
@@ -25,10 +26,18 @@ const checkCreator = async (memo: Memo, username: string): Promise<boolean> => {
   return false;
 };
 
-export const getAllMemos = async (): Promise<ResponseMemoDTO[]> => {
+export const getAllMemos = async (options: PaginationOptions): Promise<Pagination<ResponseMemoDTO>> => {
   try {
-    const memos = await memoRepository.find({ relations: ['createdBy'] });
-    return memos.map((memo) => Memo.toDTO(memo));
+    const { take, page } = options;
+    const [memos, count] = await memoRepository.findAndCount({
+      relations: ['createdBy'],
+      take: take,
+      skip: take * (page - 1),
+      order: { createdAt: 'DESC' },
+    });
+    const memoDTOs = memos.map((memo) => Memo.toDTO(memo));
+
+    return new Pagination(memoDTOs, count);
   } catch (err) {
     throw new CustomError(500, 'Internal server error');
   }

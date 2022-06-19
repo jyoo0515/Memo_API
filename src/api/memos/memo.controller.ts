@@ -1,8 +1,11 @@
 import { Context } from 'koa';
+import { DEFAULT_PAGE_COUNT, DEFAULT_PAGE_SIZE } from '../../constants';
 import * as memoService from './memo.service';
 
 export const getAllMemos = async (ctx: Context) => {
-  ctx.body = await memoService.getAllMemos();
+  const take = Number(ctx.request.query.take) || DEFAULT_PAGE_SIZE;
+  const page = Number(ctx.request.query.page) || DEFAULT_PAGE_COUNT;
+  ctx.body = await memoService.getAllMemos({ take, page });
 };
 
 export const getOneMemo = async (ctx: Context) => {
