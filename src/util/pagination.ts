@@ -12,7 +12,7 @@ export class Pagination<T> {
   constructor(data: T[], total: number) {
     this.pageSize = data.length;
     this.totalCount = total;
-    this.totalPage = Math.ceil(this.totalCount / this.pageSize);
+    this.totalPage = Math.ceil(this.totalCount / this.pageSize) || 0;
     this.data = data;
   }
 }

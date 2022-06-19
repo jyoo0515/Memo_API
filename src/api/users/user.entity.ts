@@ -12,6 +12,7 @@ import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { ResponseUserDTO } from './dtos/response-user.dto';
 import { SALT_ROUNDS } from '../../constants';
 import { Memo } from '../memos/memo.entity';
+import { Comment } from '../comments/coment.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -26,6 +27,9 @@ export class User {
 
   @OneToMany(() => Memo, (memo) => memo.createdBy, { onDelete: 'CASCADE' })
   memos: Memo[];
+
+  @OneToMany(() => Comment, (comment) => comment.createdBy, { onDelete: 'CASCADE' })
+  comments: Comment[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
   createdAt: Date;
