@@ -2,6 +2,7 @@ import { BeforeInsert, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn,
 import bcrypt from 'bcrypt';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { ResponseUserDTO } from './dtos/response-user.dto';
+import { SALT_ROUNDS } from '../../constants';
 
 @Entity({ name: 'users' })
 export class User {
@@ -22,12 +23,18 @@ export class User {
 
   @BeforeInsert()
   private async hashPassword() {
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(SALT_ROUNDS);
     this.password = await bcrypt.hash(this.password, salt);
+  }
+
+  static async comparePassword(password: string, hashedPassword: string) {
+    const result = await bcrypt.compare(password, hashedPassword);
+    return result;
   }
 
   static toDTO(userEntity: User) {
     const data = instanceToPlain(userEntity);
+    console.log(plainToInstance(ResponseUserDTO, data));
     return plainToInstance(ResponseUserDTO, data);
   }
 }

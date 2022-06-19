@@ -3,6 +3,7 @@ import { validate } from 'class-validator';
 import { Context, Next } from 'koa';
 import { CustomError } from '../util/custom-error';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateBody = (schema: { new (): any }) => {
   return async (ctx: Context, next: Next) => {
     const target = plainToClass(schema, ctx.request.body);
@@ -11,7 +12,7 @@ export const validateBody = (schema: { new (): any }) => {
       throw new CustomError(400, 'Bad Request');
     } else {
       ctx.request.body = target;
-      await next();
+      return next();
     }
   };
 };
