@@ -11,16 +11,16 @@ export const getOneMemo = async (ctx: Context) => {
 };
 
 export const createMemo = async (ctx: Context) => {
-  ctx.body = await memoService.createMemo(ctx.request.body);
+  ctx.body = await memoService.createMemo(ctx.request.body, ctx.state.user);
   ctx.status = 201;
 };
 
 export const updateMemo = async (ctx: Context) => {
   const { memoId } = ctx.params;
-  ctx.body = await memoService.updateMemo(memoId, ctx.request.body);
+  ctx.body = await memoService.updateMemo(memoId, ctx.request.body, ctx.state.user);
 };
 
 export const deleteMemo = async (ctx: Context) => {
   const { memoId } = ctx.params;
-  ctx.body = await memoService.deleteMemo(memoId);
+  ctx.body = await memoService.deleteMemo(memoId, ctx.state.user);
 };

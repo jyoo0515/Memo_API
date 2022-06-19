@@ -1,5 +1,6 @@
 import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { User } from '../users/user.entity';
 import { ResponseMemoDTO } from './dtos/response-memo.dto';
 
 @Entity({ name: 'memos' })
@@ -12,6 +13,9 @@ export class Memo {
 
   @Column()
   content: string;
+
+  @ManyToOne(() => User, (user) => user.memos, { onDelete: 'CASCADE' })
+  createdBy: User;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
   createdAt: Date;
