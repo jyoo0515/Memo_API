@@ -21,7 +21,7 @@ export class User {
   @Column({ unique: true })
   username: string;
 
-  @Column()
+  @Column({ type: 'char', length: 60 })
   password: string;
 
   @OneToMany(() => Memo, (memo) => memo.createdBy, { onDelete: 'CASCADE' })
