@@ -20,5 +20,6 @@ export const errorHandler = async (ctx: Context, next: Next) => {
     ctx.body = {
       message: error.message,
     };
+    ctx.app.emit('error', err);
   }
 };
