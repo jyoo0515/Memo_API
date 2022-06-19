@@ -7,10 +7,11 @@ import { CustomError } from '../../util/custom-error';
 import { UpdateMemoDTO } from './dtos/update-memo.dto';
 import { findUserByUsername } from '../users/user.service';
 import { Pagination, PaginationOptions } from '../../util/pagination';
+import { getComments } from '../comments/comment.service';
 
 const memoRepository: Repository<Memo> = AppDataSource.getRepository(Memo);
 
-const findOneById = async (id: number): Promise<Memo> => {
+export const findMemoById = async (id: number): Promise<Memo> => {
   try {
     const memo = await memoRepository.findOne({ where: { id: id }, relations: ['createdBy'] });
     if (memo == null) throw new CustomError(404, `Memo with id ${id} not found`);
@@ -44,8 +45,9 @@ export const getAllMemos = async (options: PaginationOptions): Promise<Paginatio
 };
 
 export const getOneMemo = async (id: number): Promise<ResponseMemoDTO> => {
-  const memo = await findOneById(id);
-  return Memo.toDTO(memo);
+  const memo = await findMemoById(id);
+  const comments = await getComments(memo);
+  return Memo.toDTO(memo, comments);
 };
 
 export const createMemo = async (createMemoDTO: CreateMemoDTO, username: string): Promise<ResponseMemoDTO> => {
@@ -64,7 +66,7 @@ export const updateMemo = async (
   updateMemoDTO: UpdateMemoDTO,
   username: string
 ): Promise<ResponseMemoDTO> => {
-  const memo = await findOneById(id);
+  const memo = await findMemoById(id);
   const matchingCreator = await checkCreator(memo, username);
   if (!matchingCreator) throw new CustomError(403, 'Update only allowed to the creator');
 
@@ -79,7 +81,7 @@ export const updateMemo = async (
 };
 
 export const deleteMemo = async (id: number, username: string): Promise<ResponseMemoDTO> => {
-  const memo = await findOneById(id);
+  const memo = await findMemoById(id);
   const matchingCreator = await checkCreator(memo, username);
   if (!matchingCreator) throw new CustomError(403, 'Deletion only allowed to the creator');
 

@@ -1,28 +1,18 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
-import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
-import { ResponseCommentDTO } from '../../comments/dtos/response-comment.dto';
+import { IsDate, IsNumber, IsString } from 'class-validator';
 
 @Exclude()
-export class ResponseMemoDTO {
+export class ResponseCommentDTO {
   @Expose()
   @IsNumber()
   id: number;
 
   @Expose()
   @IsString()
-  title: string;
-
-  @Expose()
-  @IsString()
   content: string;
 
   @Expose()
-  @IsOptional()
-  comments?: ResponseCommentDTO[];
-
-  @Expose()
   @Transform(({ value }) => value.username)
-  @IsString()
   createdBy: string;
 
   @Expose()
