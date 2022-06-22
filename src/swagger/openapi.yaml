@@ -1,0 +1,475 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Memo API
+  description: 간단한 메모 API
+
+servers:
+  - url: http://localhost:5000/api
+
+tags:
+  - name: memos
+    description: 메모 관련 기능
+  
+  - name: users
+    description: 회원 관련 기능
+  
+  - name: comments
+    description: 댓글 관련 기능
+
+paths:
+  /memos:
+    get:
+      tags:
+        - memos
+      summary: 페이지네이션이 적용된 메모 리스트 API
+      description: take와 page를 옵션으로 주어 페이지 응답의 크기 조절 가능
+      parameters:
+        - name: take
+          description: 한 페이지에 가져올 메모의 최대 개수
+          in: query
+          schema:
+            type: integer
+          default: 10
+        - name: page
+          description: 가져올 페이지 번호
+          in: query
+          schema:
+            type: integer
+          default: 1
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pagination'
+    post:
+      security:
+        - JWT: []
+      tags:
+        - memos
+      summary: 메모 생성 API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMemoDTO'
+      
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMemoDTO'
+        401:
+          $ref: '#/components/responses/401'
+        400:
+          $ref: '#/components/responses/400'
+        
+        
+  /memos/{memoId}:
+    parameters:
+      - name: memoId
+        description: 메모의 id
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    get:
+      tags:
+        - memos
+      summary: 메모 상세 보기 API
+      description: memoId를 id로 갖는 메모의 댓글을 포함한 상세 정보
+      
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMemoDTO'
+        404:
+          $ref: '#/components/responses/404'
+  
+    patch:
+      security:
+        - JWT: []
+      tags:
+        - memos
+      summary: 메모 수정 API
+      description: title, content 둘다 혹은 하나를 선택해 수정
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMemoDTO'
+      
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMemoDTO'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+
+    delete:
+      security:
+        - JWT: []
+      tags:
+        - memos
+      summary: 메모 삭제 API
+      description: 메모를 삭제 후 삭제된 메모의 정보를 반환
+
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMemoDTO'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+  
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: 사용자 회원가입 API
+      description: username이 사용되고 있지 않다면 회원 등록
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+      
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+        400:
+          $ref: '#/components/responses/400'
+  
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: 사용자 로그인 API
+      description: 로그인 성공시 jwt 발급 후 쿠키에 저장
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                message:
+                  type: string
+                  example: Login successful
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: access_token=abc123; Path=/; HttpOnly
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+  
+  /users/logout:
+    get:
+      security:
+        - JWT: []
+      tags:
+        - users
+      summary: 사용자 로그아웃 API
+
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                message:
+                  type: string
+                  example: Logout successful
+        401:
+          $ref: '#/components/responses/401'
+  
+  /comments:
+    post:
+      security:
+        - JWT: []
+      tags:
+        - comments
+      summary: 댓글 생성 API
+      description: memoId를 가진 메모에 댓글 생성
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCommentDTO'
+      
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseCommentDTO'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+
+  /comments/{commentId}:
+    parameters:
+      - name: commentId
+        description: 댓글의 id
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    patch:
+      security:
+        - JWT: []
+      tags:
+        - comments
+      summary: 댓글 수정 API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCommentDTO'
+      
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseCommentDTO'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+
+    delete:
+      security:
+        - JWT: []
+      tags:
+        - comments
+      summary: 댓글 삭제 API
+
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseCommentDTO'
+  
+components:
+  securitySchemes:
+    JWT:
+      type: apiKey
+      in: cookie
+      name: access_token
+
+  responses:
+    400:
+      description: 요청의 양식이 맞지 않음
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Bad request
+    401:
+      description: 로그인이 필요함
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Login required
+    403:
+      description: 권한이 없음
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Operation only allowd to the creator
+    404:
+      description: 자원을 찾을 수 없음
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: ${resoucre} with id {id} not found
+
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        pageSize:
+          type: integer
+        totalCount:
+          type: integer
+        totalPage:
+          type: integer
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              title:
+                type: string
+              content:
+                type: string
+              createdBy:
+                type: string
+              createdAt:
+                type: string
+                format: date-time
+              updatedAt:
+                type: string
+                format: date-time
+
+    ResponseMemoDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        comments:
+          type: array
+          items:
+            $ref: "#/components/schemas/ResponseCommentDTO"
+        createdBy:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateMemoDTO:
+      type: object
+      required:
+        - title
+        - content
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+
+    UpdateMemoDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+
+    UserDTO:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    
+    ResponseCommentDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        content:
+          type: string
+        createdBy:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateCommentDTO:
+      type: object
+      required:
+        - memoId
+        - content
+      properties:
+        memoId:
+          type: integer
+        content:
+          type: string
+    
+    UpdateCommentDTO:
+      type: object
+      properties:
+        content:
+          type: string
