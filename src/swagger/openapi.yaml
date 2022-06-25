@@ -58,7 +58,7 @@ paths:
               $ref: '#/components/schemas/CreateMemoDTO'
       
       responses:
-        200:
+        201:
           description: ok
           content:
             application/json:
