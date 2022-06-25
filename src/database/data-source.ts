@@ -16,4 +16,21 @@ const AppDataSource = new DataSource({
   migrationsRun: true,
 });
 
-export default AppDataSource;
+const TestDataSource = new DataSource({
+  type: 'postgres',
+  host: 'localhost',
+  username: 'test',
+  password: 'test',
+  database: 'test',
+  port: 5433,
+  logging: false,
+  entities: ['src/**/**.entity{.ts,.js}'],
+  synchronize: true,
+});
+
+let DB = AppDataSource;
+if (process.env.NODE_ENV === 'test') {
+  DB = TestDataSource;
+}
+
+export default DB;

@@ -8,7 +8,7 @@
     "jest": true
   },
   "extends": ["plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
-  "ignorePatterns": ["node_modules", "dist", "src/database/migrations"],
+  "ignorePatterns": ["node_modules", "dist", "src/database/migrations", "test"],
   "rules": {
     "prettier/prettier": ["error", { "endOfLine": "auto" }]
   }
