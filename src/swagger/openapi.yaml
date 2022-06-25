@@ -59,7 +59,7 @@ paths:
       
       responses:
         201:
-          description: ok
+          description: created
           content:
             application/json:
               schema:
@@ -161,8 +161,8 @@ paths:
               $ref: '#/components/schemas/UserDTO'
       
       responses:
-        200:
-          description: ok
+        201:
+          description: created
           content:
             application/json:
               schema:
@@ -244,8 +244,8 @@ paths:
               $ref: '#/components/schemas/CreateCommentDTO'
       
       responses:
-        200:
-          description: ok
+        201:
+          description: created
           content:
             application/json:
               schema:
