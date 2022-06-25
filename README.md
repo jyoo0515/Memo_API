@@ -36,4 +36,9 @@ $ docker-compose up --build
 ```
 
 ### 4. Check Swagger document
-Go to http://localhost:5000/docs to check out the api document
+Go to http://localhost:5000/docs to check out the api document an run tests
+
+## Testing
+```(bash)
+$ npm run test
+```
