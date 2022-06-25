@@ -4,6 +4,7 @@ import * as userService from './user.service';
 
 export const register = async (ctx: Context) => {
   ctx.body = await userService.register(ctx.request.body);
+  ctx.status = 201;
 };
 
 export const login = async (ctx: Context) => {
