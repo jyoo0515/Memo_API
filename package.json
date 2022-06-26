@@ -13,8 +13,7 @@
     "migration:run": "typeorm-ts-node-commonjs migration:run -d src/database/data-source.ts",
     "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/database/data-source.ts",
     "pretest": "docker run -d --rm --name test-instance -e POSTGRES_USER=test -e POSTGRES_PASSWORD=test -e POSTGRES_DB=test -p 5433:5432 postgres:14-alpine",
-    "test": "cross-env NODE_ENV=test jest --runInBand || docker kill test-instance",
-    "posttest": "docker kill test-instance"
+    "test": "cross-env NODE_ENV=test jest --runInBand && docker kill test-instance || docker kill test-instance"
   },
   "author": "jasonyoo",
   "dependencies": {
